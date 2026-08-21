@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Alexandria{% endblock %}
+
+{% block content %}
+
+<!-- ── Hero Section ──────────────────────────────────────────── -->
+<section class="hero">
+  <div class="container">
+    <div class="hero__eyebrow">IBM watsonx.ai  ·  Granite Models</div>
+    <h1 class="hero__title">Your Intelligent<br /><em>Literary Companion</em></h1>
+    <p class="hero__subtitle">
+      Discover your next favourite book, generate study guides, track your reading journey,
+      and have conversations with an AI that truly understands literature.
+    </p>
+    <div class="hero__actions">
+      <a href="/chat" class="btn btn--primary btn--lg">Start Chatting with Alexandria</a>
+      <a href="/discover" class="btn btn--outline btn--lg">Discover Books</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── Status Bar ─────────────────────────────────────────────── -->
+<div class="container">
+  <div class="status-bar" id="statusBar">
+    <div class="status-bar__item">
+      <span class="status-bar__dot status-bar__dot--checking" id="statusDot"></span>
+      <span class="status-bar__label" id="statusLabel">Connecting to IBM watsonx.ai…</span>
+    </div>
+    <div class="status-bar__item status-bar__item--right">
+      <button class="btn btn--sm btn--ghost" id="openPreferences">⚙ Set Reading Profile</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Feature Cards ──────────────────────────────────────────── -->
+<section class="container section">
+  <div class="section-header">
+    <h2 class="section-title">What can Alexandria do?</h2>
+    <p class="section-subtitle">A complete literary intelligence suite — all in one place.</p>
+  </div>
+  <div class="cards-grid cards-grid--4">
+
+    <a href="/chat" class="feature-card">
+      <div class="feature-card__icon">💬</div>
+      <h3 class="feature-card__title">Chat Agent</h3>
+      <p class="feature-card__desc">
+        Have rich literary conversations. Ask anything — recommendations, comparisons,
+        author insights, or plot analysis.
+      </p>
+      <span class="feature-card__cta">Open Chat →</span>
+    </a>
+
+    <a href="/discover" class="feature-card">
+      <div class="feature-card__icon">🔍</div>
+      <h3 class="feature-card__title">AI Discovery</h3>
+      <p class="feature-card__desc">
+        Get personalised book recommendations powered by your reading profile and
+        AI-curated genre intelligence.
+      </p>
+      <span class="feature-card__cta">Discover Books →</span>
+    </a>
+
+    <a href="/bookshelf" class="feature-card">
+      <div class="feature-card__icon">📚</div>
+      <h3 class="feature-card__title">Virtual Bookshelf</h3>
+      <p class="feature-card__desc">
+        Organise your reading life. Track what you've read, what you're reading,
+        and what's on your wish list.
+      </p>
+      <span class="feature-card__cta">View Shelf →</span>
+    </a>
+
+    <a href="/study" class="feature-card">
+      <div class="feature-card__icon">📝</div>
+      <h3 class="feature-card__title">Study Guides</h3>
+      <p class="feature-card__desc">
+        Generate structured study guides, discussion questions, thematic analysis,
+        and conceptual summaries instantly.
+      </p>
+      <span class="feature-card__cta">Generate Guide →</span>
+    </a>
+
+  </div>
+</section>
+
+<!-- ── Quick Stats ─────────────────────────────────────────────── -->
+<section class="container section">
+  <div class="stats-row" id="statsRow">
+    <div class="stat-card">
+      <div class="stat-card__number" id="statBooksOnShelf">0</div>
+      <div class="stat-card__label">Books on Shelf</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card__number" id="statReading">0</div>
+      <div class="stat-card__label">Currently Reading</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card__number" id="statCompleted">0</div>
+      <div class="stat-card__label">Completed</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card__number">∞</div>
+      <div class="stat-card__label">Books to Discover</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Quick Chat Widget ───────────────────────────────────────── -->
+<section class="container section">
+  <div class="quick-chat-panel">
+    <div class="quick-chat-panel__header">
+      <span class="quick-chat-panel__dot"></span>
+      <span class="quick-chat-panel__title">Ask Alexandria anything</span>
+    </div>
+    <div class="quick-chat-panel__body" id="quickChatOutput">
+      <div class="chat-bubble chat-bubble--assistant">
+        <p>Hello! I'm Alexandria, your AI library guide. Ask me for a book recommendation, a summary, or anything literary — I'm here to help.</p>
+      </div>
+    </div>
+    <div class="quick-chat-panel__input">
+      <input type="text" class="form-input" id="quickChatInput"
+             placeholder="e.g. Recommend a mystery novel set in Victorian London…"
+             aria-label="Quick chat input" />
+      <button class="btn btn--primary" id="quickChatSend">Ask →</button>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// ── Dashboard JS ──────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  // Health check
+  fetch('/api/health')
+    .then(r => r.json())
+    .then(d => {
+      const dot   = document.getElementById('statusDot');
+      const label = document.getElementById('statusLabel');
+      if (d.configured) {
+        dot.className   = 'status-bar__dot status-bar__dot--ok';
+        label.textContent = `Connected · ${d.model}`;
+      } else {
+        dot.className   = 'status-bar__dot status-bar__dot--warn';
+        label.textContent = 'IBM credentials not configured — check your .env file';
+      }
+    })
+    .catch(() => {
+      document.getElementById('statusDot').className  = 'status-bar__dot status-bar__dot--error';
+      document.getElementById('statusLabel').textContent = 'Could not reach server';
+    });
+
+  // Load shelf stats
+  fetch('/api/bookshelf')
+    .then(r => r.json())
+    .then(books => {
+      document.getElementById('statBooksOnShelf').textContent = books.length;
+      document.getElementById('statReading').textContent = books.filter(b => b.status === 'reading').length;
+      document.getElementById('statCompleted').textContent = books.filter(b => b.status === 'completed').length;
+    })
+    .catch(() => {});
+
+  // Quick chat
+  const input  = document.getElementById('quickChatInput');
+  const sendBtn = document.getElementById('quickChatSend');
+  const output  = document.getElementById('quickChatOutput');
+
+  async function sendQuickChat() {
+    const msg = input.value.trim();
+    if (!msg) return;
+    input.value = '';
+    output.innerHTML += `<div class="chat-bubble chat-bubble--user"><p>${escapeHtml(msg)}</p></div>`;
+    const thinking = document.createElement('div');
+    thinking.className = 'chat-bubble chat-bubble--assistant chat-bubble--thinking';
+    thinking.innerHTML = '<span class="dots"><span></span><span></span><span></span></span>';
+    output.appendChild(thinking);
+    output.scrollTop = output.scrollHeight;
+
+    try {
+      const res  = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: msg, history: [] }),
+      });
+      const data = await res.json();
+      thinking.remove();
+      output.innerHTML += `<div class="chat-bubble chat-bubble--assistant"><p>${formatMarkdown(data.reply || data.error)}</p></div>`;
+    } catch (e) {
+      thinking.remove();
+      output.innerHTML += `<div class="chat-bubble chat-bubble--assistant chat-bubble--error"><p>Connection error. Please try again.</p></div>`;
+    }
+    output.scrollTop = output.scrollHeight;
+  }
+
+  sendBtn.addEventListener('click', sendQuickChat);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') sendQuickChat(); });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Discover Books — Alexandria{% endblock %}
+
+{% block content %}
+<div class="container section">
+
+  <!-- ── Page Header ────────────────────────────────────────── -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Discover Books</h1>
+      <p class="page-subtitle">AI-powered recommendations tailored to your reading DNA.</p>
+    </div>
+    <button class="btn btn--ghost" id="openPreferences">⚙ Edit Profile</button>
+  </div>
+
+  <!-- ── Search Bar ─────────────────────────────────────────── -->
+  <div class="discover-search">
+    <div class="discover-search__inner">
+      <span class="discover-search__icon">🔍</span>
+      <input type="text" class="discover-search__input" id="discoverSearch"
+             placeholder="Search by mood, theme, author, or describe what you're looking for…"
+             aria-label="Book discovery search" />
+      <button class="btn btn--primary" id="discoverSearchBtn">Find Books</button>
+    </div>
+    <div class="discover-search__suggestions">
+      <span class="discover-search__hint">Try: </span>
+      <button class="tag-btn" data-q="uplifting books for difficult times">"uplifting books for difficult times"</button>
+      <button class="tag-btn" data-q="novels set in 1920s Paris">"novels set in 1920s Paris"</button>
+      <button class="tag-btn" data-q="books to understand AI and technology">"AI and technology"</button>
+      <button class="tag-btn" data-q="debut novels that won literary prizes">"award-winning debuts"</button>
+    </div>
+  </div>
+
+  <!-- ── Category Browse ───────────────────────────────────── -->
+  <div class="category-strip" id="categoryStrip">
+    <button class="category-pill category-pill--active" data-cat="">For You</button>
+    <button class="category-pill" data-cat="Literary Fiction">Literary</button>
+    <button class="category-pill" data-cat="Science Fiction">Sci-Fi</button>
+    <button class="category-pill" data-cat="Fantasy">Fantasy</button>
+    <button class="category-pill" data-cat="Mystery & Thriller">Mystery</button>
+    <button class="category-pill" data-cat="Historical Fiction">Historical</button>
+    <button class="category-pill" data-cat="Non-Fiction">Non-Fiction</button>
+    <button class="category-pill" data-cat="Biography">Biography</button>
+    <button class="category-pill" data-cat="Philosophy">Philosophy</button>
+    <button class="category-pill" data-cat="Classics">Classics</button>
+    <button class="category-pill" data-cat="Poetry">Poetry</button>
+  </div>
+
+  <!-- ── Recommendation Feed ───────────────────────────────── -->
+  <div class="rec-feed" id="recFeed">
+
+    <!-- Loading skeleton shown initially -->
+    <div class="rec-skeleton" id="recSkeleton">
+      <div class="rec-skeleton__item"></div>
+      <div class="rec-skeleton__item"></div>
+      <div class="rec-skeleton__item"></div>
+    </div>
+
+    <!-- Results render here -->
+    <div class="rec-results" id="recResults"></div>
+
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/discover.js') }}"></script>
+{% endblock %}

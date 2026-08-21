@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Alexandria — AI Library Assistant{% endblock %}</title>
+  <meta name="description" content="Your intelligent literary companion powered by IBM watsonx.ai and Granite models." />
+
+  <!-- Google Fonts — Editorial Stack -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Core Styles -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" />
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+  <!-- ── Navigation ─────────────────────────────────────────── -->
+  <nav class="nav" id="mainNav">
+    <div class="nav__inner">
+      <a href="/" class="nav__brand">
+        <span class="nav__brand-icon">⬡</span>
+        <span class="nav__brand-name">Alexandria</span>
+        <span class="nav__brand-tag">AI Library</span>
+      </a>
+
+      <ul class="nav__links">
+        <li><a href="/"         class="nav__link {% if request.endpoint == 'index'    %}nav__link--active{% endif %}">Dashboard</a></li>
+        <li><a href="/chat"     class="nav__link {% if request.endpoint == 'chat'     %}nav__link--active{% endif %}">Chat Agent</a></li>
+        <li><a href="/discover" class="nav__link {% if request.endpoint == 'discover' %}nav__link--active{% endif %}">Discover</a></li>
+        <li><a href="/bookshelf"class="nav__link {% if request.endpoint == 'bookshelf'%}nav__link--active{% endif %}">My Shelf</a></li>
+        <li><a href="/study"    class="nav__link {% if request.endpoint == 'study'    %}nav__link--active{% endif %}">Study Guide</a></li>
+      </ul>
+
+      <div class="nav__actions">
+        <button class="btn-icon theme-toggle" id="themeToggle" title="Toggle dark/light mode" aria-label="Toggle theme">
+          <span class="theme-toggle__icon" id="themeIcon">◑</span>
+        </button>
+        <button class="btn-icon nav__menu-btn" id="mobileMenuBtn" aria-label="Menu">☰</button>
+      </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div class="nav__mobile" id="mobileMenu">
+      <a href="/"          class="nav__mobile-link">Dashboard</a>
+      <a href="/chat"      class="nav__mobile-link">Chat Agent</a>
+      <a href="/discover"  class="nav__mobile-link">Discover</a>
+      <a href="/bookshelf" class="nav__mobile-link">My Shelf</a>
+      <a href="/study"     class="nav__mobile-link">Study Guide</a>
+    </div>
+  </nav>
+
+  <!-- ── Main Content ───────────────────────────────────────── -->
+  <main class="main-content" id="mainContent">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- ── Preferences Modal ──────────────────────────────────── -->
+  <div class="modal-overlay" id="prefModal" role="dialog" aria-modal="true" aria-label="Reader Preferences">
+    <div class="modal">
+      <div class="modal__header">
+        <h2 class="modal__title">Your Reading Profile</h2>
+        <button class="btn-icon modal__close" id="prefModalClose" aria-label="Close">✕</button>
+      </div>
+      <div class="modal__body">
+        <div class="form-group">
+          <label class="form-label">Favorite Genres <span class="form-hint">(select all that apply)</span></label>
+          <div class="chip-group" id="genreChips">
+            <button class="chip" data-value="Literary Fiction">Literary Fiction</button>
+            <button class="chip" data-value="Science Fiction">Science Fiction</button>
+            <button class="chip" data-value="Fantasy">Fantasy</button>
+            <button class="chip" data-value="Mystery & Thriller">Mystery & Thriller</button>
+            <button class="chip" data-value="Historical Fiction">Historical Fiction</button>
+            <button class="chip" data-value="Non-Fiction">Non-Fiction</button>
+            <button class="chip" data-value="Biography">Biography</button>
+            <button class="chip" data-value="Self-Help">Self-Help</button>
+            <button class="chip" data-value="Philosophy">Philosophy</button>
+            <button class="chip" data-value="Science & Nature">Science & Nature</button>
+            <button class="chip" data-value="Poetry">Poetry</button>
+            <button class="chip" data-value="Classics">Classics</button>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="readingLevel">Reading Level</label>
+            <select class="form-select" id="readingLevel">
+              <option value="Children">Children (Ages 5–10)</option>
+              <option value="Middle Grade">Middle Grade (Ages 10–13)</option>
+              <option value="Young Adult">Young Adult (Ages 13–18)</option>
+              <option value="Adult" selected>Adult</option>
+              <option value="Academic">Academic / Scholar</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="readingIntent">Reading Intent</label>
+            <select class="form-select" id="readingIntent">
+              <option value="Leisure" selected>Leisure & Pleasure</option>
+              <option value="Academic">Academic Research</option>
+              <option value="Professional">Professional Development</option>
+              <option value="Education">Educational</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Preferred Formats</label>
+          <div class="chip-group" id="formatChips">
+            <button class="chip chip--selected" data-value="Physical">Physical Book</button>
+            <button class="chip chip--selected" data-value="eBook">eBook</button>
+            <button class="chip" data-value="Audiobook">Audiobook</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button class="btn btn--ghost" id="prefModalCancel">Cancel</button>
+        <button class="btn btn--primary" id="prefModalSave">Save Profile</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Toast Notification ─────────────────────────────────── -->
+  <div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+  <!-- ── Scripts ────────────────────────────────────────────── -->
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  {% block extra_js %}{% endblock %}
+
+</body>
+</html>

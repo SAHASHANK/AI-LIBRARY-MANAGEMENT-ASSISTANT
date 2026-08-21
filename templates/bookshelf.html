@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block title %}My Bookshelf — Alexandria{% endblock %}
+
+{% block content %}
+<div class="container section">
+
+  <!-- ── Page Header ────────────────────────────────────────── -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">My Virtual Bookshelf</h1>
+      <p class="page-subtitle">Track your reading journey — past, present, and future.</p>
+    </div>
+    <button class="btn btn--primary" id="openAddBook">+ Add Book</button>
+  </div>
+
+  <!-- ── Reading Progress Summary ──────────────────────────── -->
+  <div class="progress-summary" id="progressSummary">
+    <div class="progress-summary__card">
+      <div class="progress-summary__number" id="psTotal">0</div>
+      <div class="progress-summary__label">Total Books</div>
+    </div>
+    <div class="progress-summary__card">
+      <div class="progress-summary__number" id="psReading">0</div>
+      <div class="progress-summary__label">Reading</div>
+    </div>
+    <div class="progress-summary__card">
+      <div class="progress-summary__number" id="psCompleted">0</div>
+      <div class="progress-summary__label">Completed</div>
+    </div>
+    <div class="progress-summary__card">
+      <div class="progress-summary__number" id="psWantToRead">0</div>
+      <div class="progress-summary__label">Want to Read</div>
+    </div>
+  </div>
+
+  <!-- ── Filter Tabs ────────────────────────────────────────── -->
+  <div class="filter-tabs" id="shelfFilter">
+    <button class="filter-tab filter-tab--active" data-filter="all">All Books</button>
+    <button class="filter-tab" data-filter="reading">Currently Reading</button>
+    <button class="filter-tab" data-filter="completed">Completed</button>
+    <button class="filter-tab" data-filter="want-to-read">Want to Read</button>
+  </div>
+
+  <!-- ── Bookshelf Grid ─────────────────────────────────────── -->
+  <div class="bookshelf-grid" id="bookshelfGrid">
+    <div class="bookshelf-empty" id="shelfEmpty">
+      <div class="bookshelf-empty__icon">📚</div>
+      <h3 class="bookshelf-empty__title">Your shelf is empty</h3>
+      <p class="bookshelf-empty__text">Start adding books to track your reading journey.</p>
+      <button class="btn btn--primary" id="openAddBook2">Add Your First Book</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── Add Book Modal ─────────────────────────────────────────── -->
+<div class="modal-overlay" id="addBookModal">
+  <div class="modal modal--wide">
+    <div class="modal__header">
+      <h2 class="modal__title">Add Book to Shelf</h2>
+      <button class="btn-icon modal__close" id="addBookModalClose">✕</button>
+    </div>
+    <div class="modal__body">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="bookTitle">Title *</label>
+          <input type="text" class="form-input" id="bookTitle" placeholder="e.g. The Midnight Library" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="bookAuthor">Author</label>
+          <input type="text" class="form-input" id="bookAuthor" placeholder="e.g. Matt Haig" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="bookGenre">Genre</label>
+          <input type="text" class="form-input" id="bookGenre" placeholder="e.g. Literary Fiction" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="bookStatus">Status</label>
+          <select class="form-select" id="bookStatus">
+            <option value="want-to-read">Want to Read</option>
+            <option value="reading">Currently Reading</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="bookProgress">Reading Progress: <span id="progressVal">0</span>%</label>
+        <input type="range" class="form-range" id="bookProgress" min="0" max="100" value="0" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Your Rating</label>
+        <div class="star-rating" id="starRating" data-rating="0">
+          <button class="star" data-val="1" aria-label="1 star">★</button>
+          <button class="star" data-val="2" aria-label="2 stars">★</button>
+          <button class="star" data-val="3" aria-label="3 stars">★</button>
+          <button class="star" data-val="4" aria-label="4 stars">★</button>
+          <button class="star" data-val="5" aria-label="5 stars">★</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="bookNotes">Notes</label>
+        <textarea class="form-textarea" id="bookNotes" placeholder="Your thoughts, quotes, or reminders…" rows="3"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Spine Color</label>
+        <div class="color-swatches" id="colorSwatches">
+          <button class="color-swatch color-swatch--active" data-color="#8B6F47" style="background:#8B6F47" aria-label="Brown"></button>
+          <button class="color-swatch" data-color="#4A7C59" style="background:#4A7C59" aria-label="Green"></button>
+          <button class="color-swatch" data-color="#5B4A8B" style="background:#5B4A8B" aria-label="Purple"></button>
+          <button class="color-swatch" data-color="#8B4A4A" style="background:#8B4A4A" aria-label="Red"></button>
+          <button class="color-swatch" data-color="#4A6B8B" style="background:#4A6B8B" aria-label="Blue"></button>
+          <button class="color-swatch" data-color="#8B7A4A" style="background:#8B7A4A" aria-label="Gold"></button>
+          <button class="color-swatch" data-color="#2C2C2C" style="background:#2C2C2C" aria-label="Black"></button>
+        </div>
+      </div>
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn--ghost" id="addBookCancel">Cancel</button>
+      <button class="btn btn--primary" id="saveBook">Add to Shelf</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Book Detail Modal ───────────────────────────────────────── -->
+<div class="modal-overlay" id="bookDetailModal">
+  <div class="modal modal--wide">
+    <div class="modal__header">
+      <h2 class="modal__title" id="detailTitle">Book Details</h2>
+      <button class="btn-icon modal__close" id="bookDetailClose">✕</button>
+    </div>
+    <div class="modal__body" id="detailBody"></div>
+    <div class="modal__footer">
+      <button class="btn btn--destructive" id="detailRemove">Remove from Shelf</button>
+      <button class="btn btn--primary" id="detailSave">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/bookshelf.js') }}"></script>
+{% endblock %}
