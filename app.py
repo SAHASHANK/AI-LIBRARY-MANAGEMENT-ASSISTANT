@@ -44,7 +44,7 @@ def add_no_cache_headers(response):
 # ─────────────────────────────────────────────────────────────
 #  WATSONX.AI CONFIGURATION
 # ─────────────────────────────────────────────────────────────
-IBM_API_KEY      = os.getenv("IBM_API_KEY", "ITT-iFNUsYe-gAssdRvimcUbVzLgouA_oIcIU35O-2OB")
+IBM_API_KEY      = os.getenv("IBM_API_KEY", "mM5XzTsI1P7xoEfwleY9J1C2SZAQDwpUjMedfRBEDMkG")
 WATSONX_URL      = os.getenv("WATSONX_URL", "https://us-south.ml.cloud.ibm.com")
 WATSONX_PROJECT  = os.getenv("WATSONX_PROJECT_ID", "4a098777-0c1c-4faa-9606-5717d327b37f")
 WATSONX_MODEL_ID = os.getenv("WATSONX_MODEL_ID", "meta-llama/llama-3-3-70b-instruct")
