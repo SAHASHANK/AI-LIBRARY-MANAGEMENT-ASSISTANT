@@ -48,6 +48,7 @@ IBM_API_KEY      = os.getenv("IBM_API_KEY", "iT1Givh4cOrJPUNZKzNcZmpXYkpIcYWBfnn
 WATSONX_URL      = os.getenv("WATSONX_URL", "https://us-south.ml.cloud.ibm.com")
 WATSONX_PROJECT  = os.getenv("WATSONX_PROJECT_ID", "4a098777-0c1c-4faa-9606-5717d327b37f")
 WATSONX_MODEL_ID = os.getenv("WATSONX_MODEL_ID", "meta-llama/llama-3-3-70b-instruct")
+app.secret_key = os.getenv("FLASK_SECRET_KEY", "dev-secret-change-in-production")
 
 
 def get_watsonx_model() -> ModelInference:
